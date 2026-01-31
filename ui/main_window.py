@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
         if file_type == FileType.IMAGE:
             if self.image_viewer.load_image(file_path):
                 self.stacked_widget.setCurrentWidget(self.image_viewer)
-                self.setWindowTitle(f"Media Player - {file_path}")
+                self.setWindowTitle(f"MediaViewer - {file_path}")
                 return True
             else:
                 self.show_placeholder()
@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
         elif file_type == FileType.VIDEO:
             if self.video_player.load_video(file_path):
                 self.stacked_widget.setCurrentWidget(self.video_player)
-                self.setWindowTitle(f"Media Player - {file_path}")
+                self.setWindowTitle(f"MediaViewer - {file_path}")
                 return True
             else:
                 self.show_placeholder()
@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
     def show_placeholder(self):
         """Show the placeholder widget."""
         self.stacked_widget.setCurrentWidget(self.placeholder)
-        self.setWindowTitle("Media Player")
+        self.setWindowTitle("MediaViewer")
     
     def closeEvent(self, event):
         """Clean up when closing the window."""

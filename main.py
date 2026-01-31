@@ -1,5 +1,5 @@
 """
-Media Player - A native desktop media viewer built with PySide6.
+MediaViewer - A native desktop media viewer built with PySide6.
 
 Supports viewing images and playing videos with hardware acceleration.
 Usage: python main.py [file_path]

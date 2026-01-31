@@ -1,7 +1,7 @@
 """
-Example usage and testing guide for the Media Player application.
+Example usage and testing guide for the MediaViewer application.
 
-This file demonstrates various ways to run the Media Player application.
+This file demonstrates various ways to run the MediaViewer application.
 """
 
 # =============================================================================
@@ -47,7 +47,7 @@ from core.file_handler import detect_file_type, FileType, is_valid_file
 
 # Example: Create a custom window with media viewer
 def example_custom_window():
-    """Create and display the media player window."""
+    """Create and display the MediaViewer window."""
     from PySide6.QtWidgets import QApplication
     import sys
     

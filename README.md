@@ -1,4 +1,4 @@
-# Media Player
+# MediaViewer
 
 A native desktop media viewer built with **Python** and **PySide6** (Qt for Python). Supports viewing images and playing videos with hardware-accelerated playback.
 

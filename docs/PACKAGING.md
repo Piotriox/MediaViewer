@@ -1,6 +1,6 @@
 # PyInstaller Configuration
 
-This guide explains how to package the Media Player application as a standalone executable.
+This guide explains how to package MediaViewer as a standalone executable.
 
 ## Quick Start
 
@@ -16,7 +16,7 @@ dist/main.exe  # Windows
 dist/main      # Linux/macOS
 ```
 
-## Detailed Instructions
+## Platform-Specific Instructions
 
 ### Windows
 
@@ -27,10 +27,10 @@ dist/main      # Linux/macOS
 # Install PyInstaller
 pip install pyinstaller
 
-# Create executable (one file, no console window)
+# Create executable
 pyinstaller --onefile --windowed main.py
 
-# Executable location
+# Find executable
 dist\main.exe
 
 # Optional: Add icon
@@ -46,13 +46,10 @@ source .venv/bin/activate
 # Install PyInstaller
 pip install pyinstaller
 
-# Create executable
-pyinstaller --onefile --windowed main.py
-
-# Create app bundle (recommended)
+# Create app bundle
 pyinstaller --onefile --windowed --osx-bundle-identifier=com.mediaviewer main.py
 
-# Executable location
+# Find executable
 dist/main
 ```
 
@@ -68,16 +65,13 @@ pip install pyinstaller
 # Create executable
 pyinstaller --onefile --windowed main.py
 
-# Executable location
-dist/main
-
-# Make executable (if needed)
+# Make executable
 chmod +x dist/main
 ```
 
 ## Advanced Configuration
 
-### Using PyInstaller Spec File
+### Using Spec File
 
 Create `main.spec` for more control:
 
@@ -90,182 +84,82 @@ a = Analysis(
     datas=[],
     hiddenimports=['PySide6'],
     hookspath=[],
-    hooksconfig={},
     runtime_hooks=[],
     excludedimports=[],
-    noarchive=False,
 )
-pyz = PYZ(a.pure, a.zipped_data, cipher=None)
-exe = EXE(
-    pyz,
-    a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    [],
-    name='MediaPlayer',
+pyz = PYZ(a.pure, a.zipped_data)
+exe = EXE(pyz, a.scripts, a.binaries, a.zipfiles, a.datas,
+    name='MediaViewer',
     debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
-    console=False,
-    disable_windowed_traceback=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
-)
+    windowed=True,
+    console=False)
 ```
 
-Build with spec file:
+Then run:
 ```bash
 pyinstaller main.spec
 ```
 
-## Optimization Options
+## Optimization
+
+### Add Icon
+
+```bash
+# Create icon.ico first, then:
+pyinstaller --onefile --windowed --icon=icon.ico main.py
+```
 
 ### Reduce File Size
 
 ```bash
-# Use UPX compression
+# UPX compression (if available)
 pyinstaller --onefile --windowed --upx-dir=/path/to/upx main.py
-
-# Strip binary (Linux/macOS)
-pyinstaller --onefile --windowed --strip main.py
 ```
 
-### Include Custom Icon
+### Include Hidden Imports
 
+If you get import errors:
 ```bash
-# Windows
-pyinstaller --onefile --windowed --icon=icon.ico main.py
-
-# macOS
-pyinstaller --onefile --windowed --icon=icon.icns main.py
-
-# Linux (adds to spec file manually)
-```
-
-### Additional Hidden Imports
-
-If you get import errors, add hidden imports:
-
-```bash
-pyinstaller --onefile --windowed --hidden-import=PySide6 main.py
+pyinstaller --onefile --windowed --hidden-import=PySide6.QtMultimedia main.py
 ```
 
 ## Distribution
 
 ### Windows
-
-1. Create installer with NSIS or MSI tools
-2. Or distribute the `.exe` file directly
-3. Users can run without installing Python
+- Distribute the `.exe` file directly
+- Or create installer with NSIS/MSI tools
+- Users don't need Python installed
 
 ### macOS
-
-1. Create DMG file for distribution
-2. Use `create-dmg` tool
-3. Users can drag to Applications folder
+- Create DMG file for distribution
+- Can be signed and notarized
+- Drag-to-install experience
 
 ### Linux
-
-1. Create AppImage using `appimagetool`
-2. Or distribute as tarball with executable
-3. Users may need to install dependencies (uncommon with PyInstaller)
-
-## Troubleshooting
-
-### "Module not found" errors
-
-Add to PyInstaller command:
-```bash
---hidden-import=PySide6.QtMultimedia
---hidden-import=PySide6.QtMultimediaWidgets
-```
-
-### Video playback not working in bundled app
-
-Ensure multimedia libraries are included. On Linux, you may need:
-```bash
---collect-submodules PySide6
-```
-
-### File too large
-
-- Use `--strip` option (Linux/macOS)
-- Use `--upx` option for compression
-- Consider two-file mode (`--onedir`) for development builds
-
-### Application won't start
-
-- Check for runtime errors: `main.exe > error.log 2>&1`
-- Ensure all dependencies are listed in hidden imports
-- Verify PySide6 multimedia plugins are included
-
-## Output Structure
-
-### One-file mode (`--onefile`)
-```
-dist/
-└── main.exe  (or main on Linux/macOS)
-```
-
-### One-directory mode (`--onedir`)
-```
-dist/
-└── main/
-    ├── main.exe (or main)
-    ├── PySide6/ (libraries)
-    └── ... (dependencies)
-```
-
-## Verification
-
-After building, test the executable:
-
-1. **Standalone test**: Copy `dist` folder to another machine (same OS)
-2. **No Python needed**: Verify Python is not installed on test machine
-3. **File operations**: Test opening various media files
-4. **Error handling**: Verify error messages display correctly
+- Create AppImage using appimagetool
+- Or distribute as tarball with executable
 
 ## Performance
 
-Bundled executables typically run slightly faster than Python scripts because:
-- Python bytecode is compiled ahead of time
-- No startup delay for module imports
-- Optimized library loading
+- **Executable Size**: 150-180 MB (includes Python runtime)
+- **Startup Time**: 2-3 seconds
+- **Memory**: 100-200 MB
+- **Runtime**: Same as Python version
 
-Slight drawbacks:
-- Larger file size (typically 100-200 MB with PySide6)
-- First launch may show slight delay as file is extracted
+## Troubleshooting
 
-## Code Signing (Optional)
+| Problem | Solution |
+|---------|----------|
+| PyInstaller not found | Install: `pip install pyinstaller` |
+| Missing PySide6 | Install: `pip install PySide6` |
+| Icon not showing | Ensure .ico file exists |
+| File size too large | Use `--onefile --windowed` and exclude modules |
+| Video codecs not working | Ensure system has required codecs |
+| Module not found | Add `--hidden-import=MODULE_NAME` |
 
-### Windows
+## See Also
 
-```bash
-# Sign executable with certificate
-signtool sign /f certificate.pfx /p password /t http://timestamp.server main.exe
-```
-
-### macOS
-
-```bash
-# Code sign application
-codesign --deep --force --verify --verbose --sign "Developer ID Application" dist/main.app
-
-# Notarize (required for distribution)
-xcrun altool --notarize-app --file dist/main.dmg --primary-bundle-id com.mediaviewer
-```
-
-## Next Steps
-
-After creating the executable:
-
-1. Test thoroughly on target OS
-2. Create installer if distributing widely
-3. Add version info (Windows only)
-4. Consider code signing for distribution
-5. Set up auto-update mechanism (optional)
+- [START_HERE.md](START_HERE.md) - Quick start
+- [FEATURES.md](FEATURES.md) - Features overview
+- [USAGE.md](USAGE.md) - Code examples
+- [QUICKSTART.txt](QUICKSTART.txt) - Command reference

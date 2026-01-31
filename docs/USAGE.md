@@ -1,179 +1,199 @@
-"""
-Example usage and testing guide for the MediaViewer application.
+# MediaViewer - Usage Guide
 
-This file demonstrates various ways to run the MediaViewer application.
-"""
+## Installation & Setup
 
-# =============================================================================
-# INSTALLATION & SETUP
-# =============================================================================
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-# 1. Install dependencies:
-#    pip install -r requirements.txt
+# Verify installation
+python -c "from PySide6.QtWidgets import QApplication; print('PySide6 OK')"
+```
 
-# 2. Verify installation:
-#    python -c "from PySide6.QtWidgets import QApplication; print('PySide6 OK')"
+## Running the Application
 
+### Command Line
 
-# =============================================================================
-# RUNNING THE APPLICATION
-# =============================================================================
+```bash
+# Launch without file (shows placeholder)
+python main.py
 
-# From command line:
+# Open an image file
+python main.py "path/to/image.jpg"
+python main.py "/home/user/Pictures/photo.png"
 
-# 1. Launch without a file (shows placeholder)
-#    python main.py
+# Open a video file
+python main.py "path/to/video.mp4"
+python main.py "/home/user/Videos/movie.mkv"
+```
 
-# 2. Open an image file
-#    python main.py "C:\path\to\image.jpg"
-#    python main.py "/home/user/Pictures/photo.png"
+## Programmatic Usage
 
-# 3. Open a video file
-#    python main.py "C:\path\to\video.mp4"
-#    python main.py "/home/user/Videos/movie.mkv"
+### Create Custom Window
 
-
-# =============================================================================
-# PROGRAMMATIC USAGE
-# =============================================================================
-
-# You can also use the application components directly in your own code:
-
+```python
 from ui.main_window import MainWindow
-from ui.image_viewer import ImageViewer
-from ui.video_player import VideoPlayer
-from core.file_handler import detect_file_type, FileType, is_valid_file
+from PySide6.QtWidgets import QApplication
+import sys
 
-
-# Example: Create a custom window with media viewer
-def example_custom_window():
-    """Create and display the MediaViewer window."""
-    from PySide6.QtWidgets import QApplication
-    import sys
-    
+def create_window():
+    """Create and display MediaViewer window."""
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    
-    # Open a file
-    window.open_file("example_media.jpg")
-    
+    window.open_file("example.jpg")
     sys.exit(app.exec())
 
-
-# Example: Check file type before opening
-def example_file_detection():
-    """Demonstrate file type detection."""
-    files = [
-        "image.jpg",
-        "video.mp4",
-        "document.pdf"
-    ]
-    
-    for file in files:
-        file_type = detect_file_type(file)
-        if file_type == FileType.IMAGE:
-            print(f"{file} is an image")
-        elif file_type == FileType.VIDEO:
-            print(f"{file} is a video")
-        else:
-            print(f"{file} format not supported")
-
-
-# Example: Validate before opening
-def example_validate_file():
-    """Validate file before opening."""
-    file_path = "C:\\Users\\user\\Pictures\\photo.jpg"
-    
-    if is_valid_file(file_path):
-        # Safe to open
-        pass
-    else:
-        print("File not found or format not supported")
-
-
-# =============================================================================
-# KEYBOARD SHORTCUTS (Future Enhancement)
-# =============================================================================
-
-# Planned additions:
-# - Space: Toggle play/pause (video)
-# - Left/Right Arrow: Seek backward/forward (video)
-# - Up/Down Arrow: Volume control (video)
-# - Z: Fit to window (image)
-# - C: Zoom to actual size (image)
-# - F: Fullscreen toggle
-# - Q: Quit application
-
-
-# =============================================================================
-# PERFORMANCE TIPS
-# =============================================================================
-
-# 1. Large Images
-#    - The viewer uses smooth scaling which is CPU-intensive
-#    - For very large images (>8000x8000), consider pre-scaling
-
-# 2. Video Playback
-#    - Hardware acceleration is enabled by default
-#    - Ensure your graphics drivers are up to date
-#    - Some codecs may not be available on all systems
-
-# 3. Memory Usage
-#    - Image viewer keeps full resolution in memory
-#    - Zoomed out images use less processing
-#    - Videos stream from disk with buffering
-
-
-# =============================================================================
-# PACKAGING WITH PYINSTALLER
-# =============================================================================
-
-# Create a standalone executable:
-#
-# 1. Install PyInstaller:
-#    pip install pyinstaller
-#
-# 2. Create executable:
-#    pyinstaller --onefile --windowed main.py
-#
-# 3. Find executable in 'dist' folder
-#    dist/main.exe (Windows)
-#    dist/main (Linux/macOS)
-#
-# The executable includes:
-# - Python interpreter
-# - All PySide6 libraries
-# - Application code
-# - No external dependencies needed
-
-
-# =============================================================================
-# TROUBLESHOOTING
-# =============================================================================
-
-# Issue: "ModuleNotFoundError: No module named 'PySide6'"
-# Solution: pip install PySide6
-#
-# Issue: "Video won't play"
-# Solutions:
-#   - Check video codec support (MP4, H.264, H.265)
-#   - Ensure video file is not corrupted
-#   - Try converting to MP4 format
-#
-# Issue: "Image takes long time to load"
-# Solutions:
-#   - Check file size
-#   - Reduce image resolution
-#   - Check system memory availability
-#
-# Issue: "Application crashes on startup"
-# Solutions:
-#   - Check Python version (3.8+)
-#   - Verify PySide6 installation: pip install --upgrade PySide6
-#   - Check for corrupted .venv folder (delete and recreate)
-
-
 if __name__ == "__main__":
-    # This is just documentation; don't run it directly
-    print(__doc__)
+    create_window()
+```
+
+### File Type Detection
+
+```python
+from core.file_handler import detect_file_type, FileType, is_valid_file
+
+# Detect file type
+file_type = detect_file_type("image.jpg")
+if file_type == FileType.IMAGE:
+    print("This is an image")
+elif file_type == FileType.VIDEO:
+    print("This is a video")
+
+# Validate file before opening
+if is_valid_file("path/to/file.jpg"):
+    print("File is valid")
+else:
+    print("File not found or format not supported")
+```
+
+### Use Image Viewer
+
+```python
+from ui.image_viewer import ImageViewer
+
+viewer = ImageViewer()
+if viewer.load_image("photo.jpg"):
+    print("Image loaded successfully")
+    # Zoom in by factor of 1.5
+    viewer.zoom(1.5)
+```
+
+### Use Video Player
+
+```python
+from ui.video_player import VideoPlayer
+
+player = VideoPlayer()
+if player.load_video("movie.mp4"):
+    print("Video loaded successfully")
+    player.play()
+```
+
+## API Reference
+
+### MainWindow
+
+```python
+class MainWindow(QMainWindow):
+    def open_file(file_path: str) -> bool:
+        """Open a media file. Returns True if successful."""
+        
+    def show_placeholder():
+        """Show placeholder widget."""
+```
+
+### ImageViewer
+
+```python
+class ImageViewer(QWidget):
+    def load_image(file_path: str) -> bool:
+        """Load image. Returns True if successful."""
+        
+    def zoom(factor: float):
+        """Zoom by factor (1.0 = normal, 0.5 = half, 2.0 = double)."""
+```
+
+### VideoPlayer
+
+```python
+class VideoPlayer(QWidget):
+    def load_video(file_path: str) -> bool:
+        """Load video. Returns True if successful."""
+        
+    def play():
+        """Start or resume playback."""
+        
+    def pause():
+        """Pause playback."""
+        
+    def stop():
+        """Stop playback and reset position."""
+```
+
+### file_handler
+
+```python
+class FileType(Enum):
+    IMAGE = 1
+    VIDEO = 2
+    UNSUPPORTED = 3
+
+def detect_file_type(file_path: str) -> FileType:
+    """Detect if file is image or video."""
+    
+def is_valid_file(file_path: str) -> bool:
+    """Check if file exists and format is supported."""
+```
+
+## Performance Tips
+
+### Large Images
+- The viewer uses smooth scaling which is CPU-intensive
+- For very large images (>8000x8000), consider pre-scaling
+
+### Video Playback
+- Hardware acceleration is enabled by default
+- Ensure graphics drivers are up to date
+- Some codecs may not be available on all systems
+
+### Memory Usage
+- Image viewer keeps full resolution in memory
+- Zoomed out images use less processing power
+- Videos stream from disk with buffering
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| "ModuleNotFoundError: No module named 'PySide6'" | Run `pip install -r requirements.txt` |
+| Video won't play | Check codec support, try MP4 format |
+| Image loads slowly | Check file size, reduce resolution |
+| Application crashes | Ensure Python 3.8+, run `pip install --upgrade PySide6` |
+
+## Code Structure
+
+Each module is self-contained with clear responsibilities:
+
+- **main.py** - Entry point, handles CLI arguments
+- **core/file_handler.py** - File validation and type detection
+- **core/theme.py** - UI styling and colors
+- **ui/main_window.py** - Main window and widget switching
+- **ui/image_viewer.py** - Image display with zoom/pan
+- **ui/video_player.py** - Video playback with controls
+
+## Future Enhancement Ideas
+
+- Keyboard shortcuts (Space, arrows, etc.)
+- Drag & drop file opening
+- Recent files menu
+- Fullscreen mode
+- Playlist support
+- Subtitle support
+
+## See Also
+
+- [START_HERE.md](START_HERE.md) - Quick start
+- [FEATURES.md](FEATURES.md) - Feature overview
+- [PACKAGING.md](PACKAGING.md) - PyInstaller guide
+- [QUICKSTART.txt](QUICKSTART.txt) - Command reference

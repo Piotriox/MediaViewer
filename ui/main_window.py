@@ -1,7 +1,9 @@
 """Main application window."""
 
+from pathlib import Path
 from PySide6.QtWidgets import QMainWindow, QStackedWidget, QLabel, QVBoxLayout, QWidget
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
 
 from core.file_handler import detect_file_type, FileType
 from core.theme import get_stylesheet
@@ -17,6 +19,11 @@ class MainWindow(QMainWindow):
         
         self.setWindowTitle("MediaViewer")
         self.setGeometry(100, 100, 1024, 768)
+        
+        # Set window icon (both taskbar and window)
+        icon_path = Path(__file__).parent.parent / "MediaViewer-Logo.ico"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
         
         # Create stacked widget to switch between viewers
         self.stacked_widget = QStackedWidget()

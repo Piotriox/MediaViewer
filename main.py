@@ -27,7 +27,7 @@ def main():
     """Application entry point."""
     app = QApplication(sys.argv)
     
-    app.setAttribute(Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
+    # High DPI scaling is enabled by default in modern PySide6
     
     window = MainWindow()
     window.show()

@@ -57,66 +57,6 @@ python main.py "path/to/media.jpg"
 python main.py "path/to/video.mp4"
 ```
 
-## Project Structure
-
-```
-MediaPlayer/
-├── main.py                  # Application entry point
-├── requirements.txt         # Python dependencies
-├── README.md               # This file
-├── docs/                   # Documentation folder
-│   ├── START_HERE.md       # Quick start guide
-│   ├── FEATURES.md         # Feature overview
-│   ├── USAGE.md            # Examples & API
-│   ├── PACKAGING.md        # PyInstaller guide
-│   ├── PROJECT_SUMMARY.md  # Technical details
-│   ├── INDEX.md            # Documentation index
-│   ├── COMPLETION_REPORT.md# Project summary
-│   └── QUICKSTART.txt      # Quick reference
-├── core/
-│   ├── __init__.py
-│   ├── file_handler.py    # File type detection
-│   └── theme.py           # UI theming and styling
-└── ui/
-    ├── __init__.py
-    ├── main_window.py     # Main application window
-    ├── image_viewer.py    # Image display widget
-    └── video_player.py    # Video playback widget
-```
-
-## Architecture
-
-### Core Modules
-
-**`core/file_handler.py`**
-- Detects file types by extension
-- Validates file existence and format
-- Supports images and videos
-
-**`core/theme.py`**
-- Provides dark theme stylesheet
-- Consistent color palette
-- Modern UI styling
-
-### UI Modules
-
-**`ui/main_window.py`**
-- Main application window
-- Manages switching between image/video viewers
-- Handles file opening
-
-**`ui/image_viewer.py`**
-- Image display and scaling
-- Zoom control (mouse wheel)
-- Pan support
-- Aspect ratio preservation
-
-**`ui/video_player.py`**
-- Video playback controls
-- Timeline and volume control
-- Smooth playback with hardware acceleration
-- Frame-accurate seeking
-
 ## Controls
 
 ### Image Viewer
@@ -132,19 +72,6 @@ MediaPlayer/
 ## Documentation
 
 All documentation is located in the `docs/` folder:
-
-- **[docs/START_HERE.md](docs/START_HERE.md)** - Quick start guide (start here!)
-- **[docs/FEATURES.md](docs/FEATURES.md)** - Features overview and specifications
-- **[docs/USAGE.md](docs/USAGE.md)** - Code examples and API reference
-- **[docs/PACKAGING.md](docs/PACKAGING.md)** - PyInstaller and distribution guide
-- **[docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md)** - Technical architecture and design
-- **[docs/INDEX.md](docs/INDEX.md)** - Complete documentation index
-- **[docs/COMPLETION_REPORT.md](docs/COMPLETION_REPORT.md)** - Project completion summary
-- **[docs/QUICKSTART.txt](docs/QUICKSTART.txt)** - Quick reference card
-
-## Keyboard Shortcuts
-
-Future enhancement: Consider adding standard shortcuts (Space for play/pause, arrow keys for seeking, etc.)
 
 ## Performance Notes
 
@@ -179,25 +106,9 @@ Future enhancement: Consider adding standard shortcuts (Space for play/pause, ar
 
 See LICENSE file for details.
 
-## Development
-
-### Code Style
-- Clean, readable code prioritized over excessive features
-- Minimal abstractions
-- Clear comments where necessary
-- Type hints used for clarity
-
 ### Dependencies
 - **PySide6**: Qt bindings for Python
 - **No other external dependencies**
-
-### Testing
-
-Run the application with test files:
-```bash
-python main.py test_image.jpg
-python main.py test_video.mp4
-```
 
 ## Troubleshooting
 
@@ -212,15 +123,6 @@ python main.py test_video.mp4
 **Image won't display:**
 - File may be corrupted
 - Ensure the file format is supported
-
-## Future Enhancements
-
-- Keyboard shortcuts (Space, arrows, etc.)
-- Drag and drop file opening
-- Recent files list
-- Fullscreen mode
-- Playlist support
-- Subtitle support for videos
 
 ## Features
 

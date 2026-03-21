@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "MediaViewer",
+  "version": "0.1.0",
+  "identifier": "com.arda.mediaviewer",
+  "build": {
+    "frontendDist": "../frontend/dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "npm --prefix frontend run dev",
+    "beforeBuildCommand": "npm --prefix frontend run build"
+  },
+  "app": {
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset: blob:; media-src 'self' asset: blob:;",
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$USERPROFILE/Pictures",
+          "$USERPROFILE/Videos",
+          "$USERPROFILE/Desktop",
+          "$USERPROFILE/Downloads",
+          "$TEMP",
+          "$HOME/Pictures",
+          "$HOME/Videos",
+          "$HOME/Desktop",
+          "$HOME/Downloads",
+          "/tmp"
+        ]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "windows": {
+      "nsis": {
+        "installerHooks": "./windows/hooks.nsi"
+      }
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ]
+  }
+}

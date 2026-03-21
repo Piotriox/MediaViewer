@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediaViewer</title>
+  </head>
+  <body>
+    <div id="app">
+      <div class="controls">
+        <label class="btn">
+          Select Files
+          <input id="mediaInput" type="file" accept="image/*,video/*" multiple />
+        </label>
+      </div>
+
+      <div class="stage" hidden>
+        <div id="imageContainer" class="image-container">
+          <img id="mediaImage" class="media-element" alt="Media display" />
+        </div>
+        <div id="videoContainer" class="video-container">
+          <video
+            id="mediaVideo"
+            class="media-element"
+            playsinline
+          ></video>
+          <div class="video-controls">
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+              <input 
+                type="range" 
+                id="progressSlider" 
+                class="progress-slider" 
+                min="0" 
+                max="100" 
+                value="0"
+              />
+            </div>
+            <div class="controls-bottom">
+              <button id="videoPlayBtn" class="control-btn play-btn" title="Play">▶</button>
+              <div class="time-display">
+                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="status" id="status">Click "Select Files" to choose images or videos.</div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

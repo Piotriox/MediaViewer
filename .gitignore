@@ -1,0 +1,48 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Development
+node_modules/
+*.log
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Rust/Tauri
+src-tauri/target/
+src-tauri/gen/
+
+# Windows binaries
+*.exe
+*.dll
+*.pdb
+*.exp
+*.lib
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+.history/
+*.sublime-project
+
+# Windows OS
+Thumbs.db
+.DS_Store
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary
+tmp/
+temp/

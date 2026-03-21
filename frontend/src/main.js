@@ -4,11 +4,6 @@ import { validateFile, isImageFile, isVideoFile, getFileName } from './validatio
 import { revokeObjectUrl, setupCleanupOnUnload } from './utils.js';
 import { logger } from './logger.js';
 
-// ============================================================================
-// DOM Elements
-// ============================================================================
-
-const mediaInput = document.getElementById('mediaInput');
 const statusEl = document.getElementById('status');
 const imageContainer = document.getElementById('imageContainer');
 const imageEl = document.getElementById('mediaImage');
@@ -20,10 +15,6 @@ const progressFill = document.querySelector('.progress-fill');
 const currentTimeEl = document.getElementById('currentTime');
 const durationEl = document.getElementById('duration');
 
-// ============================================================================
-// Types
-// ============================================================================
-
 /**
  * @typedef {Object} MediaItem
  * @property {string} kind - 'image' or 'video'
@@ -31,10 +22,6 @@ const durationEl = document.getElementById('duration');
  * @property {string} name - Display name
  * @property {boolean} shouldRevoke - Whether to revoke URL on cleanup
  */
-
-// ============================================================================
-// State Management
-// ============================================================================
 
 const state = {
   playlist: [],
@@ -52,7 +39,6 @@ const state = {
   panStartY: 0,
   panStartPanX: 0,
   panStartPanY: 0,
-
   addToRevoke(url) {
     if (url && url.startsWith('blob:')) {
       this.urlsToRevoke.add(url);
@@ -89,12 +75,7 @@ const state = {
   },
 };
 
-// Setup cleanup on page unload
 setupCleanupOnUnload(state.urlsToRevoke);
-
-// ============================================================================
-// Utility Functions
-// ============================================================================
 
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds)) return '0:00';
@@ -107,10 +88,6 @@ function setStatus(text) {
   statusEl.textContent = text;
 }
 
-// ============================================================================
-// Display Media
-// ============================================================================
-
 function displayImage(item) {
   if (item.kind !== 'image') {
     logger.warn(`Cannot display image: wrong type (${item.kind})`);
@@ -120,12 +97,7 @@ function displayImage(item) {
   try {
     state.currentKind = 'image';
     state.resetImageTransform();
-    
-    // Hide controls and status
-    document.querySelector('.controls').hidden = true;
     document.querySelector('.status').hidden = true;
-    
-    // Show stage with only image container
     document.querySelector('.stage').hidden = false;
     imageContainer.style.display = 'flex';
     videoContainer.style.display = 'none';
@@ -151,12 +123,7 @@ function displayVideo(item) {
 
   try {
     state.currentKind = 'video';
-    
-    // Hide controls and status
-    document.querySelector('.controls').hidden = true;
     document.querySelector('.status').hidden = true;
-    
-    // Show stage with only video container
     document.querySelector('.stage').hidden = false;
     imageContainer.style.display = 'none';
     videoContainer.style.display = 'flex';
@@ -165,8 +132,6 @@ function displayVideo(item) {
     videoEl.currentTime = 0;
 
     logger.info(`Playing video: ${item.name}`);
-
-    // Try to autoplay
     videoEl.play().catch(() => {
       logger.debug('Autoplay prevented, waiting for user interaction');
     });
@@ -198,10 +163,6 @@ function playMedia(index) {
     logger.error(`Unsupported file type: ${item.name}`);
   }
 }
-
-// ============================================================================
-// Video Controls
-// ============================================================================
 
 function updatePlayButtonState() {
   state.isPlaying = !videoEl.paused;
@@ -244,13 +205,27 @@ function handleProgressChange() {
   }
 }
 
-// ============================================================================
-// Event Handlers
-// ============================================================================
+function handleDragOver(event) {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'copy';
+  document.querySelector('.stage').classList.add('drag-over');
+  statusEl.classList.add('drag-over');
+}
 
-function handleFileSelect() {
-  const files = Array.from(mediaInput.files || []);
-  logger.info(`User selected ${files.length} file(s)`);
+function handleDragLeave(event) {
+  if (event.target === document.querySelector('#app')) {
+    document.querySelector('.stage').classList.remove('drag-over');
+    statusEl.classList.remove('drag-over');
+  }
+}
+
+function handleDrop(event) {
+  event.preventDefault();
+  document.querySelector('.stage').classList.remove('drag-over');
+  statusEl.classList.remove('drag-over');
+
+  const files = Array.from(event.dataTransfer.files || []);
+  logger.info(`User dropped ${files.length} file(s)`);
 
   state.clear();
   state.playlist = [];
@@ -280,13 +255,12 @@ function handleFileSelect() {
 
   if (state.playlist.length === 0) {
     document.querySelector('.stage').hidden = true;
-    document.querySelector('.controls').hidden = false;
     document.querySelector('.status').hidden = false;
     imageContainer.hidden = true;
     videoContainer.hidden = true;
     imageEl.removeAttribute('src');
     videoEl.removeAttribute('src');
-    setStatus('No supported image or video files selected');
+    setStatus('No supported image or video files dropped');
     return;
   }
 
@@ -296,14 +270,11 @@ function handleFileSelect() {
 }
 
 function handleKeyDown(event) {
-  // Escape to exit fullscreen
   if (event.key === 'Escape' && document.fullscreenElement) {
     document.exitFullscreen().catch(err => {
       logger.debug('Failed to exit fullscreen', err);
     });
   }
-
-  // Space to play/pause video
   if (event.code === 'Space' && state.currentKind === 'video') {
     event.preventDefault();
     handlePlayPauseClick();
@@ -313,10 +284,6 @@ function handleKeyDown(event) {
 function handleVideoPlayPause() {
   updatePlayButtonState();
 }
-
-// ============================================================================
-// Image Zoom & Pan Handlers
-// ============================================================================
 
 function handleImageWheel(event) {
   if (state.currentKind !== 'image') return;
@@ -335,47 +302,32 @@ function handleImageWheel(event) {
 
 function handleImageMouseDown(event) {
   if (state.currentKind !== 'image' || state.imageZoom <= 1) return;
-  
   state.isPanning = true;
   state.panStartX = event.clientX;
   state.panStartY = event.clientY;
   state.panStartPanX = state.imagePanX;
   state.panStartPanY = state.imagePanY;
-  
   imageEl.classList.add('grabbing');
 }
 
 function handleImageMouseMove(event) {
   if (!state.isPanning) return;
-  
   const deltaX = event.clientX - state.panStartX;
   const deltaY = event.clientY - state.panStartY;
-  
   state.imagePanX = state.panStartPanX + (deltaX / state.imageZoom);
   state.imagePanY = state.panStartPanY + (deltaY / state.imageZoom);
-  
   state.updateImageTransform();
 }
 
 function handleImageMouseUp() {
   if (!state.isPanning) return;
-  
   state.isPanning = false;
   imageEl.classList.remove('grabbing');
 }
 
-// ============================================================================
-// File Association Handler
-// ============================================================================
-
 function initializeFromFileAssociation() {
   const openedFiles = Array.isArray(window.openedFiles) ? window.openedFiles : [];
-
-  if (openedFiles.length === 0) {
-    logger.debug('No files from file association');
-    return;
-  }
-
+  if (openedFiles.length === 0) return;
   logger.info(`Opening ${openedFiles.length} file(s) from file association`);
 
   state.clear();
@@ -409,44 +361,27 @@ function initializeFromFileAssociation() {
   }
 }
 
-// ============================================================================
-// Initialization
-// ============================================================================
-
 function initialize() {
-  // File input
-  mediaInput.addEventListener('change', handleFileSelect);
-
-  // Keyboard
+  document.addEventListener('dragover', handleDragOver, false);
+  document.addEventListener('dragleave', handleDragLeave, false);
+  document.addEventListener('drop', handleDrop, false);
   document.addEventListener('keydown', handleKeyDown);
-
-  // Image zoom and pan
   imageContainer.addEventListener('wheel', handleImageWheel, { passive: false });
   imageContainer.addEventListener('mousedown', handleImageMouseDown);
   imageContainer.addEventListener('mousemove', handleImageMouseMove);
   imageContainer.addEventListener('mouseup', handleImageMouseUp);
   imageContainer.addEventListener('mouseleave', handleImageMouseUp);
-
-  // Video controls
   videoPlayBtn.addEventListener('click', handlePlayPauseClick);
   progressSlider.addEventListener('input', handleProgressChange);
-
-  // Video event listeners
   videoEl.addEventListener('play', handleVideoPlayPause);
   videoEl.addEventListener('pause', handleVideoPlayPause);
   videoEl.addEventListener('timeupdate', updateProgressBar);
   videoEl.addEventListener('loadedmetadata', updateDuration);
-
-  // Initialize UI
-  setStatus('Click "Select Files" to choose images or videos');
+  setStatus('Drag and drop images or videos here');
   updatePlayButtonState();
-
-  // Try to load files from file association
   initializeFromFileAssociation();
-
   logger.info('MediaViewer initialized');
 }
 
-// Start app
 initialize();
 

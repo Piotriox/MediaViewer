@@ -1,20 +1,22 @@
 # Development Guide
 
-Quick reference for MediaViewer development on Windows.
+Complete reference for developing MediaViewer. This guide covers setting up the development environment, understanding the codebase structure, and common development tasks.
 
 ## Quick Start
 
-```cmd
-# First time setup
+Install dependencies and start development:
+
+```bash
+# Install all dependencies (root + frontend)
 npm install
 
-# Start development
+# Start dev server with hot-reload
 npm run dev
 
-# Build release
+# Create production build
 npm run release
 
-# Run tests
+# Run unit tests
 npm --prefix frontend run test
 ```
 
@@ -22,172 +24,162 @@ npm --prefix frontend run test
 
 ```
 MediaViewer/
-├── frontend/              # Vite + JavaScript
+├── frontend/                    # Vite + JavaScript frontend
 │   ├── src/
-│   │   ├── main.js       # App entry point (200 lines)
-│   │   ├── validation.js # File validation (100 lines)
-│   │   ├── utils.js      # URL management (50 lines)
-│   │   ├── logger.js     # Logging utilities (30 lines)
-│   │   ├── style.css     # UI styling
-│   │   └── *.test.js     # Unit tests
-│   └── index.html
+│   │   ├── main.js             # App entry point & state management
+│   │   ├── validation.js       # File type & path validation
+│   │   ├── utils.js            # URL & memory management
+│   │   ├── logger.js           # Logging utilities
+│   │   ├── style.css           # UI styling
+│   │   ├── validation.test.js  # Unit tests
+│   │   ├── assets/             # Static assets
+│   │   └── index.html          # HTML structure
+│   ├── package.json            # Frontend dependencies
+│   ├── vitest.config.js        # Test configuration
+│   └── vite.config.js          # Vite build configuration
 │
-├── src-tauri/            # Rust backend
+├── src-tauri/                  # Tauri backend (Rust)
 │   ├── src/
-│   │   ├── main.rs      # Entry point
-│   │   └── lib.rs       # Core logic
-│   ├── Cargo.toml       # Dependencies
-│   ├── tauri.conf.json  # Config (IMPORTANT)
-│   └── .cargo/config.toml # Build settings
+│   │   ├── main.rs            # Application entry point
+│   │   └── lib.rs             # Window initialization & file association logic
+│   ├── Cargo.toml             # Rust dependencies
+│   ├── build.rs               # Build script
+│   ├── tauri.conf.json        # Security & window configuration
+│   └── capabilities/          # Security permissions
 │
-└── Docs/
-    ├── README.md        # Project overview
-    ├── ARCHITECTURE.md  # Design details
-    ├── BUILD.md         # Build instructions
-    └── WINDOWS.md       # Windows-specific info
+├── package.json               # Root workspace configuration
+├── BUILD.md                   # Multi-platform build guide
+├── WINDOWS.md                 # Windows-specific instructions
+├── LINUX.md                   # Linux-specific instructions
+├── MACOS.md                   # macOS-specific instructions
+├── ARCHITECTURE.md            # System design documentation
+└── README.md                  # Project overview
 ```
 
-## Common Tasks
+## Development Workflow
 
-### Starting Development
+### Start Development Server
 
-```cmd
+```bash
 npm run dev
 ```
 
-This starts:
-- Dev server on http://localhost:5173
-- Tauri app with hot-reload
-- Open F12 for debugging
+This launches:
+- Vite dev server on http://localhost:5173
+- Tauri application with hot-reload enabled
+- Press F12 in the app to open DevTools
 
-### Making Code Changes
+### Frontend Development
 
-**Frontend** (`frontend/src/*.js`):
+Frontend code is located in `frontend/src/`:
 - Changes hot-reload automatically
-- Check console (F12) for errors
+- Console output appears in DevTools (F12)
+- Check for errors before committing
 
-**Backend** (`src-tauri/src/*.rs`):
-- Changes require app restart
-- Stop dev app, make changes, restart with `npm run dev`
+### Backend Development
+
+Backend code is located in `src-tauri/src/`:
+- Changes require full app restart
+- Stop dev app, edit code, run `npm run dev` again
+- Use `log::info!()`, `log::warn!()`, `log::error!()` in Rust
 
 ### Testing
 
-```cmd
-# Run all tests
+Run the test suite:
+
+```bash
+# Run all tests once
 npm --prefix frontend run test
 
-# Run with UI
+# Run tests with UI dashboard
 npm --prefix frontend run test:ui
 
 # Generate coverage report
 npm --prefix frontend run test:coverage
 
-# Watch mode (auto-rerun on changes)
+# Watch mode (re-run on changes)
 npm --prefix frontend run test -- --watch
 ```
 
-Test files in `frontend/src/*.test.js`
+Test files are located in `frontend/src/*.test.js`
 
 ### Building
 
-```cmd
-# Development build (fast, large)
+Build the application for distribution:
+
+```bash
+# Debug/development build (larger, faster)
 npm run build
 
-# Release build (slow, small, optimized)
+# Optimized release build (smaller, slower)
 npm run release
 ```
 
-### Debugging
+## Debugging
 
-**JavaScript Console**:
-- Press F12 in running app
-- See all console.log output
-- Use `logger.error()`, `logger.warn()`, `logger.info()`
+### Browser DevTools
 
-**Tauri Debug**:
-- Right-click window title → "Inspect Element"
-- JavaScript DevTools window opens
-- Full Chrome DevTools available
+Access debugging tools while the app is running:
+1. Press F12 in the application window
+2. Full Chrome DevTools opens
+3. Inspect elements, check console, profile performance
 
-**Console Logs**:
+### Console Output
+
+Use the logger in JavaScript:
+
 ```javascript
-// In frontend code
 import { logger } from './logger.js';
 
-logger.error('File not found', { path, error });
-logger.warn('Autoplay blocked');
-logger.info('Playing video', { name });
-logger.debug('State updated', { state }); // Dev only
+logger.error('Error message', { details });
+logger.warn('Warning message');
+logger.info('Info message');
+logger.debug('Debug details'); // Only in development
 ```
 
-## Architecture Overview
+In Rust:
 
-### Data Flow
-
-```
-User selects files
-    ↓
-validation.js checks types
-    ↓
-main.js manages state and UI
-    ↓
-utils.js creates object URLs
-    ↓
-Display media (image or video)
-```
-
-### Component Responsibilities
-
-- **main.js**: State, lifecycle, user interaction
-- **validation.js**: File type checking, error messages
-- **utils.js**: Memory management (blob URLs)
-- **logger.js**: Consistent error logging
-- **Rust backend**: File association, window setup
-
-## Modifying Features
-
-### Add New File Type
-
-1. Update `frontend/src/validation.js`:
-```javascript
-const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg', 'mov', 'mkv', 'avi', 'wmv', 'm4v', 'flv'];
-```
-
-2. Test in `frontend/src/validation.test.js`
-
-3. Update documentation in `README.md`
-
-### Change UI Layout
-
-1. Edit `frontend/src/style.css` for styling
-2. Edit `frontend/index.html` for structure
-3. Update button handlers in `frontend/src/main.js`
-
-### Add New Tauri Command
-
-1. Create command in `src-tauri/src/lib.rs`:
 ```rust
-#[tauri::command]
-async fn my_command(name: String) -> Result<String> {
-    Ok(format!("Hello {}", name))
-}
+log::error!("Error: {}", msg);
+log::warn!("Warning: {}", msg);
+log::info!("Info: {}", msg);
+log::debug!("Debug: {}", msg);
 ```
 
-2. Call from frontend:
-```javascript
-import { invoke } from '@tauri-apps/api/tauri';
+Output appears in console and application logs.
 
-const result = await invoke('my_command', { name: 'World' });
-```
+## Code Organization
 
-### Change Window Configuration
+### State Management (main.js)
 
-Edit `src-tauri/tauri.conf.json`:
-- Window size: `"app"."windows"[0]."width"` and `"height"`
-- Title bar: `"app"."windows"[0]."title"`
-- Icon: `"bundle"."icon"`
-- Security: `"app"."security"`
+Central state object manages:
+- Playlist (array of media items)
+- Current playback index
+- Image zoom and pan values
+- URL cleanup tracking
+
+### Validation (validation.js)
+
+Provides type checking:
+- `validateFile()` - Check if file is supported
+- `isImageFile()` - Image type detection
+- `isVideoFile()` - Video type detection
+- `isPathSafe()` - Security check for path traversal
+
+### URL Management (utils.js)
+
+Handles blob URL lifecycle:
+- `createObjectUrl()` - Create URL from file
+- `revokeObjectUrl()` - Release memory
+- `setupCleanupOnUnload()` - Cleanup on page exit
+
+### Logging (logger.js)
+
+Consistent logging interface:
+- `logger.error()` - Error level
+- `logger.warn()` - Warning level
+- `logger.info()` - Info level
+- `logger.debug()` - Debug level (dev only)
 
 ## Dependency Management
 

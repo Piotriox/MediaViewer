@@ -301,46 +301,42 @@ code {
 }
 
 /* MediaViewer UI */
-.controls {
+
+#app {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  text-align: center;
+  border-inline: none;
+  min-height: 100svh;
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  padding: 18px 0 10px;
+  flex-direction: column;
+  box-sizing: border-box;
   background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  z-index: 100;
+  transition: background-color 0.2s;
+}
+
+#app.drag-over {
+  background: var(--accent-bg);
+  border: 2px dashed var(--accent);
+}
+
+.status {
+  text-align: center;
+  padding: 14px 20px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
   flex-shrink: 0;
-}
-
-.btn {
-  border: 1px solid var(--border);
-  background: var(--code-bg);
-  color: var(--text-h);
-  padding: 10px 14px;
-  border-radius: 10px;
   cursor: pointer;
-  font: inherit;
+  transition: all 0.2s;
+  user-select: none;
 }
 
-.btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-label.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-label.btn input[type='file'] {
-  width: 0;
-  height: 0;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
+.status.drag-over {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 500;
 }
 
 .stage {
@@ -355,10 +351,15 @@ label.btn input[type='file'] {
   align-items: center;
   overflow: hidden;
   background: #000;
+  transition: border 0.2s;
 }
 
 .stage:not([hidden]) {
   display: flex;
+}
+
+.stage.drag-over {
+  border: 2px dashed var(--accent);
 }
 
 /* Image Container with Zoom & Pan */
@@ -388,19 +389,7 @@ label.btn input[type='file'] {
   cursor: grabbing !important;
 }
 
-.status {
-  text-align: center;
-  padding: 14px 20px;
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-}
 
-.stage:not([hidden]) ~ .status {
-  display: none;
-}
-
-/* Video Container */
 .video-container {
   position: relative;
   width: 100%;

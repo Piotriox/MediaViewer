@@ -1,15 +1,7 @@
-/**
- * File validation utilities
- * Validates file types, sizes, and paths
- */
-
-// Supported file extensions
 export const SUPPORTED_EXTENSIONS = {
   image: ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.svg'],
   video: ['.mp4', '.webm', '.ogg', '.mov', '.mkv', '.avi', '.wmv', '.m4v'],
 };
-
-const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2GB
 
 /**
  * Determines if a file is an image based on extension

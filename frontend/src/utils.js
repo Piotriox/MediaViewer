@@ -1,9 +1,4 @@
 /**
- * File handling utilities for MediaViewer
- * Manages ObjectURL creation and cleanup
- */
-
-/**
  * Creates an ObjectURL from a file path
  * @param {string} path - File path
  * @returns {string} Object URL

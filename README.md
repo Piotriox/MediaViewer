@@ -1,41 +1,45 @@
 # MediaViewer
 
-A lightweight Windows desktop media viewer built with Tauri and Vite. Open, browse, and play image and video files with an intuitive interface.
+A lightweight media viewer application built with Tauri and Vite. Designed for opening, browsing, and playing image and video files with an intuitive and responsive interface.
 
-## 🖥️ Requirements
+## Requirements
 
-- **Windows Only**: Windows 10 or later (x86_64)
-- .NET Framework or Visual C++ Redistributable
+- **Operating Systems**: Windows 10+, Linux (x86_64), macOS (Intel & Apple Silicon)
+- **.NET Framework or C++ Redistributable**: Required for Windows
 
 ## Features
 
-✅ **Image Support**
-- PNG, JPG, JPEG, GIF, BMP, WebP, SVG
-- Click to toggle fullscreen
-- Memory-efficient display
+**Image Support**
+- Supported formats: PNG, JPG, JPEG, GIF, BMP, WebP, SVG
+- Fullscreen display capability
+- Memory-efficient rendering
+- Zoom and pan controls
+- Seamless navigation between images
 
-✅ **Video Support**
-- MP4, WebM, Ogg, MOV, MKV, AVI, WMV, M4V
-- Native HTML5 video controls
-- Autoplay prevention handling
-- Auto-advance to next video on end
+**Video Support**
+- Supported formats: MP4, WebM, Ogg, MOV, MKV, AVI, WMV, M4V
+- Native HTML5 video player
+- Playback controls with progress bar
+- Auto-advance to next file on completion
+- Keyboard shortcuts (Space to play/pause)
 
-✅ **File Association**
-- Double-click media files to open in MediaViewer
-- Windows file association support
-- Multi-file opening
+**File Association**
+- Double-click media files to open directly in MediaViewer
+- Multi-file opening support
+- Native platform integration (Windows, Linux, macOS)
 
-✅ **Security**
-- Proper Content Security Policy (CSP)
-- Limited asset protocol scope
-- File path validation
-- Input validation for all files
+**Security & Robustness**
+- Content Security Policy (CSP) implementation
+- Restricted asset protocol scope
+- Comprehensive file path validation
+- Input sanitization for all file operations
 
-✅ **Developer Experience**
-- Clean, modular JavaScript architecture
+**Developer Experience**
+- Modular JavaScript architecture
 - Comprehensive error handling and logging
-- Unit tests with Vitest
-- Documented code with JSDoc
+- Unit test coverage with Vitest
+- JSDoc-documented code
+- Cross-platform support (Windows, Linux, macOS)
 
 ## Project Structure
 

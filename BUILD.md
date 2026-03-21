@@ -19,13 +19,13 @@ npm run release
 
 MediaViewer supports three platforms. Choose your platform for detailed setup instructions:
 
-### 🪟 **Windows 10+ (x86_64)**
+**Windows 10+ (x86_64)**
 See [WINDOWS.md](WINDOWS.md) for detailed Windows build setup and troubleshooting.
 
-### 🐧 **Linux (x86_64)**
+**Linux (x86_64)**
 See [LINUX.md](LINUX.md) for detailed Linux build setup and troubleshooting.
 
-### 🍎 **macOS (x86_64, ARM64)**
+**macOS (x86_64, ARM64)**
 See [MACOS.md](MACOS.md) for detailed macOS build setup and troubleshooting.
 
 ## General Build Commands

@@ -19,12 +19,10 @@
           "$USERPROFILE/Videos",
           "$USERPROFILE/Desktop",
           "$USERPROFILE/Downloads",
-          "$TEMP",
           "$HOME/Pictures",
           "$HOME/Videos",
           "$HOME/Desktop",
-          "$HOME/Downloads",
-          "/tmp"
+          "$HOME/Downloads"
         ]
       }
     }

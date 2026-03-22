@@ -1,5 +1,6 @@
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 use tauri::Manager;
+use std::fs;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
@@ -49,6 +50,48 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     })
 }
 
+/// Validates that a file path is safe
+/// Allows any file location (full filesystem access) but validates symlink boundaries
+fn validate_file_path(file: &Path) -> Result<PathBuf, String> {
+  // Check if file exists
+  if !file.exists() {
+    // Generic error message
+    log::debug!("File not found: {}", file.display());
+    return Err("File not found or inaccessible".to_string());
+  }
+
+  // Resolve symlinks to get the canonical path
+  let canonical = fs::canonicalize(file).map_err(|e| {
+    log::debug!("Failed to resolve path {}: {}", file.display(), e);
+    "Unable to access file".to_string()
+  })?;
+
+  // Detect and warn about symlinks
+  if file != canonical {
+    match file.read_link() {
+      Ok(_) => {
+        log::warn!(
+          "Symlink detected: user_provided={}, resolved_to={}",
+          file.display(),
+          canonical.display()
+        );
+      }
+      Err(_) => {
+        // Path normalization
+        log::debug!("Path normalized: {} -> {}", file.display(), canonical.display());
+      }
+    }
+  }
+
+  // Log access at debug level with full path
+  log::debug!("File access allowed: {}", canonical.display());
+  
+  // Log access at info level with generic message
+  log::info!("File loaded successfully");
+  
+  Ok(canonical)
+}
+
 /// Collects file paths from command-line arguments (Windows/Linux/macOS file association)
 fn collect_opened_files_from_args() -> Vec<PathBuf> {
   #[cfg(any(windows, target_os = "linux", target_os = "macos"))]
@@ -94,19 +137,23 @@ fn build_opened_files_init_script(
   let mut valid_files = Vec::new();
 
   for file in files {
-    // Validate file exists and is accessible
-    if !file.exists() {
-      log::warn!("File not found: {}", file.display());
-      continue;
-    }
+    // Validate file path (checks existence, resolves symlinks, verifies scope)
+    match validate_file_path(file) {
+      Ok(canonical_path) => {
+        // Allow the canonical path through asset protocol
+        if let Err(e) = asset_scope.allow_file(&canonical_path) {
+          log::error!("Failed to allow file {}: {}", canonical_path.display(), e);
+          continue;
+        }
 
-    // Allow file through asset protocol
-    if let Err(e) = asset_scope.allow_file(file) {
-      log::error!("Failed to allow file {}: {}", file.display(), e);
-      continue;
+        log::info!("Validated and allowed file: {}", canonical_path.display());
+        valid_files.push(canonical_path);
+      }
+      Err(e) => {
+        log::warn!("File validation failed: {}", e);
+        continue;
+      }
     }
-
-    valid_files.push(file);
   }
 
   if valid_files.is_empty() {

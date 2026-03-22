@@ -1,6 +1,6 @@
 import './style.css';
 import { convertFileSrc } from '@tauri-apps/api/core';
-import { validateFile, isImageFile, isVideoFile, getFileName } from './validation.js';
+import { validateFile, validateMimeType, validateFileSize, formatFileSize, isImageFile, isVideoFile, getFileName } from './validation.js';
 import { revokeObjectUrl, setupCleanupOnUnload } from './utils.js';
 import { logger } from './logger.js';
 
@@ -230,43 +230,99 @@ function handleDrop(event) {
   state.clear();
   state.playlist = [];
 
-  for (const file of files) {
-    const validation = validateFile(file.name);
+  let totalPlaylistSize = 0;
+  const validatedFiles = [];
 
+  for (const file of files) {
+    // Check file size first
+    const sizeCheck = validateFileSize(file, totalPlaylistSize);
+    if (!sizeCheck.valid) {
+      logger.warn(`Skipping file: ${file.name} - ${sizeCheck.error}`);
+      statusEl.textContent = sizeCheck.error;
+      continue;
+    }
+
+    // Check extension
+    const validation = validateFile(file.name);
     if (!validation.valid) {
       logger.warn(`Skipping unsupported file: ${file.name} (${validation.error})`);
       continue;
     }
 
+    // Create blob URL immediately to prevent memory leak (blob URL fix)
+    let objectUrl;
     try {
-      const objectUrl = URL.createObjectURL(file);
+      objectUrl = URL.createObjectURL(file);
       state.addToRevoke(objectUrl);
-
-      state.playlist.push({
-        kind: validation.type,
-        src: objectUrl,
-        name: file.name,
-        shouldRevoke: true,
-      });
+      logger.debug(`Blob URL created for ${file.name}`);
     } catch (error) {
       logger.error(`Failed to create URL for file ${file.name}`, error);
+      continue;
     }
+
+    // Store for async validation
+    validatedFiles.push({
+      file,
+      objectUrl,
+      validation,
+      totalPlaylistSize,
+    });
+
+    totalPlaylistSize += file.size;
   }
 
-  if (state.playlist.length === 0) {
-    document.querySelector('.stage').hidden = true;
-    document.querySelector('.status').hidden = false;
-    imageContainer.hidden = true;
-    videoContainer.hidden = true;
-    imageEl.removeAttribute('src');
-    videoEl.removeAttribute('src');
-    setStatus('No supported image or video files dropped');
-    return;
-  }
+  // Validate MIME types asynchronously for all files
+  const validationPromises = validatedFiles.map(async (item) => {
+    try {
+      const isValid = await validateMimeType(item.file);
+      
+      if (!isValid) {
+        logger.warn(`MIME type validation failed for ${item.file.name} - file may be corrupted or misnamed`);
+        // Revoke blob URL if MIME validation fails (blob URL memory leak fix)
+        revokeObjectUrl(item.objectUrl);
+        state.urlsToRevoke.delete(item.objectUrl);
+        return null;
+      }
 
-  logger.info(`Loaded ${state.playlist.length} media file(s)`);
-  state.currentIndex = 0;
-  playMedia(0);
+      return {
+        kind: item.validation.type,
+        src: item.objectUrl,
+        name: item.file.name,
+        size: item.file.size,
+        shouldRevoke: true,
+      };
+    } catch (error) {
+      logger.error(`Error validating MIME type for ${item.file.name}`, error);
+      // Revoke blob URL on validation error
+      revokeObjectUrl(item.objectUrl);
+      state.urlsToRevoke.delete(item.objectUrl);
+      return null;
+    }
+  });
+
+  // Wait for all validations and update UI
+  Promise.all(validationPromises).then((results) => {
+    const validItems = results.filter(item => item !== null);
+    state.playlist = validItems;
+
+    if (state.playlist.length === 0) {
+      document.querySelector('.stage').hidden = true;
+      document.querySelector('.status').hidden = false;
+      imageContainer.hidden = true;
+      videoContainer.hidden = true;
+      imageEl.removeAttribute('src');
+      videoEl.removeAttribute('src');
+      setStatus('No supported image or video files dropped');
+      return;
+    }
+
+    logger.info(`Loaded ${state.playlist.length} media file(s) (${formatFileSize(totalPlaylistSize)} total)`);
+    state.currentIndex = 0;
+    playMedia(0);
+  }).catch(error => {
+    logger.error('Error processing files', error);
+    setStatus('Error processing files');
+  });
 }
 
 function handleKeyDown(event) {

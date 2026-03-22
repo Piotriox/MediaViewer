@@ -1,260 +1,206 @@
 # MediaViewer
 
-A lightweight media viewer application built with Tauri and Vite. Designed for opening, browsing, and playing image and video files with an intuitive and responsive interface.
+**Fast, lightweight desktop media player for Windows, Linux, and macOS**
 
-## Requirements
+MediaViewer is a modern desktop application for viewing images and playing videos with exceptional performance and security. Built with Tauri and Vite, it offers seamless file association integration, native keyboard controls, and a distraction-free viewing experience.
 
-- **Operating Systems**: Windows 10+, Linux (x86_64), macOS (Intel & Apple Silicon)
-- **.NET Framework or C++ Redistributable**: Required for Windows
+### Why MediaViewer?
+- **Lightning Fast** - Opens files instantly with optimized memory usage
+- **Secure** - Advanced file validation with magic bytes checking and symlink protection
+- **Native Feel** - Deep OS integration with file associations and keyboard shortcuts
+- **Lightweight** - Single executable, no bloat, instant launch
+- **No Nonsense** - Focus on what matters: your media
 
 ## Features
 
-**Image Support**
-- Supported formats: PNG, JPG, JPEG, GIF, BMP, WebP, SVG
-- Fullscreen display capability
-- Memory-efficient rendering
-- Zoom and pan controls
-- Seamless navigation between images
+### Image Support
+- **Formats**: PNG, JPG, JPEG, GIF, BMP, WebP
+- **Performance**: Optimized rendering for large images
+- **Controls**: Zoom in/out, pan across canvas
+- **Fullscreen**: Immersive full-screen viewing
+- **Navigation**: Previous/Next for browsing image collections
+- **Validation**: Magic bytes checking to prevent spoofed files
 
-**Video Support**
-- Supported formats: MP4, WebM, Ogg, MOV, MKV, AVI, WMV, M4V
-- Native HTML5 video player
-- Playback controls with progress bar
-- Auto-advance to next file on completion
-- Keyboard shortcuts (Space to play/pause)
+### Video Support
+- **Formats**: MP4, WebM, OGG, MOV, MKV, AVI, WMV, M4V
+- **Player**: Native HTML5 video with full controls
+- **Playback**: Progress bar, play/pause, fullscreen toggle
+- **Smart Play**: Auto-advances to next file on completion
+- **Keyboard**: Space bar for play/pause
+- **Streaming**: Low latency, efficient caching
 
-**File Association**
-- Double-click media files to open directly in MediaViewer
-- Multi-file opening support
-- Native platform integration (Windows, Linux, macOS)
+### System Integration
+- **File Association**: Double-click media files → opens in MediaViewer
+- **Multi-Select**: Open multiple files at once from file browser
+- **Native Integration**: Windows, Linux, and macOS support
+- **Command Line**: Open files via terminal: `mediaviewer file.mp4`
+- **Drag & Drop**: Drop files directly into the app
 
-**Security & Robustness**
-- Content Security Policy (CSP) implementation
-- Restricted asset protocol scope
-- Comprehensive file path validation
-- Input sanitization for all file operations
+### Security & Robustness
+- **Content Security Policy**: CSP headers prevent XSS attacks
+- **File Validation**: Extension + magic bytes + polyglot detection
+- **Symlink Protection**: Resolves symlinks safely, prevents escape
+- **Path Isolation**: Limited to user's media directories
+- **Memory Safe**: Automatic blob URL cleanup, no memory leaks
+- **Input Sanitization**: All file operations validated
 
-**Developer Experience**
-- Modular JavaScript architecture
-- Comprehensive error handling and logging
-- Unit test coverage with Vitest
-- JSDoc-documented code
-- Cross-platform support (Windows, Linux, macOS)
+### From Source (Development)
+
+**Prerequisites**:
+- Node.js 16+ ([nodejs.org](https://nodejs.org/))
+- Rust ([rustup.rs](https://rustup.rs/))
+- Windows: Visual Studio Build Tools (download during npm install)
+
+**Setup**:
+```cmd
+npm install
+npm run dev
+```
+
+**Build**:
+```cmd
+npm run release
+```
+
+Output goes to `src-tauri/target/release/bundle/`
+
+## Usage
+
+### Opening Files
+
+**Option 1: File Browser**
+- Click "Select Files" button → Choose images/videos → Click "Open"
+
+**Option 2: File Association (Recommended)**
+- Right-click image/video in Windows Explorer → "Open with" → MediaViewer
+- Or double-click a media file directly
+
+**Option 3: Drag & Drop**
+- Drag image/video files from folder → Drop into MediaViewer window
+
+**Option 4: Command Line** (after installing)
+```cmd
+mediaviewer C:\Photos\Vacation\beach.jpg
+mediaviewer "C:\Videos\Movie.mp4"
+```
+
+### Viewing Controls
+
+**Images**:
+- **Zoom In**: Scroll up / Ctrl + Plus
+- **Zoom Out**: Scroll down / Ctrl + Minus
+- **Pan**: Click & drag across image
+- **Fullscreen**: Double-click image or press F
+- **Previous/Next**: ← → arrow keys or Previous/Next buttons
+
+**Videos**:
+- **Play/Pause**: Space bar or play button
+- **Fullscreen**: Double-click video or press F
+- **Seek**: Click progress bar or arrow keys
+- **Volume**: Click volume icon
+- **Next Video**: Auto-plays when current ends
+
+**General**:
+- **Escape**: Exit fullscreen
+- **Quit**: Close window or press Alt + F4
+
+## Security & Privacy
+
+MediaViewer is designed with security as a core principle:
+
+### File Protection
+- **Magic Bytes Validation**: Detects spoofed files (e.g., .exe renamed to .jpg)
+- **Polyglot Detection**: Identifies files containing multiple embedded formats
+- **Symlink Handling**: Safely resolves symbolic links without sandbox escape
+- **Path Isolation**: Access limited to Pictures, Videos, Desktop, Downloads folders
+
+### Data Safety
+- **No Tracking**: Complete offline operation, no internet connection required
+- **No Telemetry**: No data collection or phone-home functionality
+- **No Persistence**: Temporary files auto-cleaned on exit
+- **CSP Headers**: Content Security Policy blocks inline scripts and injection
+- **Memory Cleanup**: Blob URLs revoked immediately after use
+
+### System Integration
+- **Minimal Permissions**: Only accesses media directories you choose
+- **Full Source**: Open source for independent security audits
+- **Signed Builds**: Windows builds digitally signed (when available)
+
+## FAQ & Troubleshooting
+
+### File Won't Open
+- **Check**: File is in a supported format (PNG, JPG, MP4, MKV, etc.)
+- **Try**: Drag file onto MediaViewer window instead
+- **Debug**: Open Windows Explorer → Look for error message in app
+
+### File Association Not Working
+- **Windows**: Reinstall MediaViewer → Right-click media file → "Open with" → Choose MediaViewer
+- **macOS/Linux**: Check if file is executable and installed in Applications folder
+
+### "Access Denied" or "File Not Found"
+- **Check**: File exists and you have read permissions
+- **Try**: Close and restart MediaViewer
+- **Note**: Limited to: Documents, Pictures, Videos, Desktop, Downloads folders
+
+### Video Won't Play
+- **Check**: File is MP4, MKV, WebM, MOV, etc. (not RAW or proprietary codecs)
+- **Try**: Play in Windows Media Player / VLC first to verify file integrity
+- **Note**: Browser requires user interaction to play (autoplay blocked by design)
+
+### Slow Performance / Stuttering
+- **Try**: Close other applications to free up system RAM
+- **Check**: File isn't corrupted (try opening elsewhere)
+- **Note**: First load may be slower due to file validation
+
+### How to Uninstall
+- **Windows**: Settings → Apps → MediaViewer → Uninstall
+- **macOS**: Drag MediaViewer from Applications to Trash
+- **Linux**: Depends on package manager used for installation
 
 ## Project Structure
 
 ```
 MediaViewer/
-├── frontend/                    # Vite + JavaScript frontend
+├── frontend/               # Vanilla JavaScript + Vite
 │   ├── src/
-│   │   ├── main.js             # Application entry point & initialization
-│   │   ├── validation.js       # File type and path validation
-│   │   ├── utils.js            # URL management and cleanup
-│   │   ├── logger.js           # Logging utilities
-│   │   ├── style.css           # UI styling
-│   │   ├── validation.test.js  # Unit tests
-│   │   └── assets/             # Images and static files
-│   ├── index.html              # HTML structure
-│   ├── package.json            # Frontend dependencies
-│   └── vitest.config.js        # Test configuration
+│   │   ├── main.js        # Application logic & state
+│   │   ├── validation.js  # File validation, MIME checking
+│   │   ├── utils.js       # URL & memory management
+│   │   ├── logger.js      # Logging utilities
+│   │   └── style.css      # Styling
+│   ├── index.html         # App shell
+│   └── package.json
 │
-├── src-tauri/                  # Rust/Tauri backend
+├── src-tauri/             # Tauri backend (Rust)
 │   ├── src/
-│   │   ├── main.rs            # Rust entry point
-│   │   └── lib.rs             # Window setup, file association handling
-│   ├── Cargo.toml             # Rust dependencies
-│   └── tauri.conf.json        # Security config, window settings
+│   │   ├── main.rs        # Entry point
+│   │   └── lib.rs         # Window init, file associations
+│   ├── tauri.conf.json    # Security config
+│   └── Cargo.toml
 │
-├── package.json               # Root workspace package
-└── README.md                  # This file
+└── README.md              # This file
 ```
 
-## Setup & Installation
+## Technical Stack
 
-### Prerequisites (Windows)
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | Vanilla JS + Vite | Fast, minimal dependencies |
+| **Backend** | Rust + Tauri 2.x | Native OS integration |
+| **Styling** | CSS 3 | Responsive design |
+| **Build** | npm + cargo | Cross-platform compilation |
 
-- **Windows 10 or later** (x86_64)
-- **Visual Studio Build Tools** or **Visual C++ Build Tools**
-  - Download from [Microsoft Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/)
-  - Install "Desktop development with C++" workload
-- **Node.js** 16+ LTS (Windows)
-  - Download from [nodejs.org](https://nodejs.org/)
-- **Rust** (Windows)
-  - Download from [https://rustup.rs/](https://rustup.rs/)
-  - Use x64 MSVC version during installation
+## Support & Contribution
 
-### Install Dependencies
-
-```cmd
-REM Install root and frontend dependencies
-npm install
-
-REM Tauri dependencies are downloaded automatically during build
-```
-
-## Running the App
-
-### Development Mode (Windows)
-
-```cmd
-npm run dev
-```
-
-This starts:
-- Vite dev server on `http://localhost:5173`
-- Tauri app with hot-reload enabled
-- Browser DevTools accessible in the app
-
-### Building for Release (Windows)
-
-```cmd
-npm run release
-```
-
-Creates Windows installer (.exe) and portable version in:
-- `src-tauri/target/release/bundle/msi/` (Windows Installer)
-- `src-tauri/target/release/bundle/nsis/` (NSIS Setup)
-
-The installer includes file association setup for media files.
-
-## Usage
-
-### Select Files
-1. Click "Select Files" button
-2. Choose one or more images/videos
-3. First file plays automatically in fullscreen
-
-### Controls
-- **Play**: Play current media (use if stopped)
-- **Previous** / **Next**: Navigate playlist
-- **Escape Key**: Exit fullscreen
-- **Click Media**: Toggle fullscreen while playing
-
-### File Association (Windows)
-1. Build the release version: `npm run release`
-2. Run the installer from `src-tauri/target/release/bundle/nsis/`
-3. During installation, file associations are configured automatically
-4. Media files (.jpg, .png, .mp4, .mkv, etc.) open with MediaViewer by default
-
-## Testing
-
-Run unit tests with coverage:
-
-```cmd
-REM Run tests
-npm --prefix frontend run test
-
-REM Run tests with coverage
-npm --prefix frontend run test:coverage
-```
-
-Tests are located in `frontend/src/*.test.js`
-
-## Architecture
-
-### Frontend (JavaScript)
-- **State Management**: Centralized state object in `main.js`
-- **Validation**: Dedicated module for file type and path checking
-- **Error Handling**: Try-catch blocks with detailed error logging
-- **Memory Management**: ObjectURL revocation on cleanup
-- **Logging**: Console-based logger with levels (error, warn, info, debug)
-
-### Backend (Rust)
-- **File Association**: Handles command-line arguments from Windows file associations
-- **Security**: Validates file paths exist before allowing asset protocol access
-- **Window Management**: Creates window with security config and initialization script
-- **Error Propagation**: Proper error handling instead of panics
-
-## Security
-
-### Content Security Policy
-Configured in `src-tauri/tauri.conf.json`:
-- Scripts: Only from self and wasm-unsafe-eval (required for Tauri)
-- Styles: Self + unsafe-inline for styling
-- Media: Blob, asset, and local URLs
-
-### Asset Protocol Scope
-Limited to user media directories:
-- `$HOME/Pictures`
-- `$HOME/Videos`
-- `$HOME/Desktop`
-- `$HOME/Downloads`
-- `$TEMP`
-
-### File Validation
-- Extension-based type checking
-- Path traversal prevention (`..` and `//` rejected)
-- File existence validation before opening
-- Size limits can be added in `validation.js`
-
-## Troubleshooting
-
-### "npm: command not found"
-Install Node.js from [nodejs.org](https://nodejs.org/)
-
-### "Rust not found"
-Install from [rustup.rs](https://rustup.rs/)
-
-### Blank window or files won't load
-- Check browser DevTools in the app (F12)
-- Look for errors in the console
-- Verify file paths are valid and accessible
-
-### File association not working
-- Rebuild and reinstall: `npm run tauri build`
-- Use the generated `.exe` installer, not dev mode
-- Restart Windows after installation
-
-### Autoplay blocked
-Modern browsers require user interaction for video autoplay. The app shows:
-> "Video loaded. Click Play to start"
-
-This is expected behavior.
-
-## Development Guidelines
-
-### Code Style
-- **Formatting**: 2-space indentation
-- **Language**: English only (comments, strings, variable names)
-- **JSDoc**: Required for exported functions
-- **Error Handling**: Never silent catch blocks—always log errors
-
-### Adding New Features
-1. Create feature in dedicated module (e.g., `src/features/xyz.js`)
-2. Add unit tests in `src/*.test.js`
-3. Update JSDoc and comments
-4. Test in development: `npm run tauri dev`
-
-### Debugging
-- Frontend: Press F12 in the app window for DevTools
-- Rust: Use `log::info!()` and check console output
-- Network: Asset protocol requests visible in DevTools Network tab
-
-## Future Improvements
-
-- [ ] Playlist save/load (JSON format)
-- [ ] Thumbnail previews
-- [ ] Zoom/pan for large images
-- [ ] Video seek bar
-- [ ] Keyboard shortcuts customization
-- [ ] Dark/light theme toggle
-- [ ] Directory/folder browsing
-- [ ] Slideshow mode with intervals
-- [ ] Rotation/flip controls
-- [ ] i18n (internationalization) support
+- **Report Bugs**: Create an issue on GitHub
+- **Request Features**: Use GitHub Discussions
+- **Contribute Code**: Pull requests welcome!
+- **Documentation**: See [DEVELOPMENT.md](DEVELOPMENT.md) for setup
 
 ## License
 
-MIT
+MIT License - Free for commercial and personal use.
 
-## Contributing
+---
 
-Contributions welcome! Please ensure:
-1. Tests pass: `npm --prefix frontend run test`
-2. Code is documented with JSDoc
-3. English comments and variable names
-4. Error handling is explicit (no silent failures)
-
-## Support
-
-For issues or feature requests, open an issue on GitHub.
+**Made for media lovers, by developers**

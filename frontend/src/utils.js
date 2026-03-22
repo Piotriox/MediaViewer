@@ -1,19 +1,4 @@
 /**
- * Creates an ObjectURL from a file path
- * @param {string} path - File path
- * @returns {string} Object URL
- */
-export function createObjectUrl(path) {
-  try {
-    const url = URL.createObjectURL(new File([], path));
-    return url;
-  } catch (error) {
-    console.error('Failed to create object URL:', error);
-    throw new Error(`Could not create URL for file: ${path}`);
-  }
-}
-
-/**
  * Revokes an ObjectURL to prevent memory leaks
  * @param {string|null} url - Object URL to revoke
  */

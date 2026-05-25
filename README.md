@@ -46,23 +46,7 @@ MediaViewer is a modern desktop application for viewing images and playing video
 
 ### From Source (Development)
 
-**Prerequisites**:
-- Node.js 16+ ([nodejs.org](https://nodejs.org/))
-- Rust ([rustup.rs](https://rustup.rs/))
-- Windows: Visual Studio Build Tools (download during npm install)
-
-**Setup**:
-```cmd
-npm install
-npm run dev
-```
-
-**Build**:
-```cmd
-npm run release
-```
-
-Output goes to `src-tauri/target/release/bundle/`
+For development setup, prerequisites, and build instructions, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Usage
 
@@ -108,94 +92,12 @@ mediaviewer "C:\Videos\Movie.mp4"
 
 MediaViewer is designed with security as a core principle:
 
-### File Protection
-- **Magic Bytes Validation**: Detects spoofed files (e.g., .exe renamed to .jpg)
-- **Polyglot Detection**: Identifies files containing multiple embedded formats
+- **Magic Bytes Validation**: Detects spoofed files
 - **Symlink Handling**: Safely resolves symbolic links without sandbox escape
-- **Path Isolation**: Access limited to Pictures, Videos, Desktop, Downloads folders
-
-### Data Safety
-- **No Tracking**: Complete offline operation, no internet connection required
-- **No Telemetry**: No data collection or phone-home functionality
-- **No Persistence**: Temporary files auto-cleaned on exit
-- **CSP Headers**: Content Security Policy blocks inline scripts and injection
-- **Memory Cleanup**: Blob URLs revoked immediately after use
-
-### System Integration
-- **Minimal Permissions**: Only accesses media directories you choose
-- **Full Source**: Open source for independent security audits
-- **Signed Builds**: Windows builds digitally signed (when available)
-
-## FAQ & Troubleshooting
-
-### File Won't Open
-- **Check**: File is in a supported format (PNG, JPG, MP4, MKV, etc.)
-- **Try**: Drag file onto MediaViewer window instead
-- **Debug**: Open Windows Explorer → Look for error message in app
-
-### File Association Not Working
-- **Windows**: Reinstall MediaViewer → Right-click media file → "Open with" → Choose MediaViewer
-- **macOS/Linux**: Check if file is executable and installed in Applications folder
-
-### "Access Denied" or "File Not Found"
-- **Check**: File exists and you have read permissions
-- **Try**: Close and restart MediaViewer
-- **Note**: Limited to: Documents, Pictures, Videos, Desktop, Downloads folders
-
-### Video Won't Play
-- **Check**: File is MP4, MKV, WebM, MOV, etc. (not RAW or proprietary codecs)
-- **Try**: Play in Windows Media Player / VLC first to verify file integrity
-- **Note**: Browser requires user interaction to play (autoplay blocked by design)
-
-### Slow Performance / Stuttering
-- **Try**: Close other applications to free up system RAM
-- **Check**: File isn't corrupted (try opening elsewhere)
-- **Note**: First load may be slower due to file validation
-
-### How to Uninstall
-- **Windows**: Settings → Apps → MediaViewer → Uninstall
-- **macOS**: Drag MediaViewer from Applications to Trash
-- **Linux**: Depends on package manager used for installation
-
-## Project Structure
-
-```
-MediaViewer/
-├── frontend/               # Vanilla JavaScript + Vite
-│   ├── src/
-│   │   ├── main.js        # Application logic & state
-│   │   ├── validation.js  # File validation, MIME checking
-│   │   ├── utils.js       # URL & memory management
-│   │   ├── logger.js      # Logging utilities
-│   │   └── style.css      # Styling
-│   ├── index.html         # App shell
-│   └── package.json
-│
-├── src-tauri/             # Tauri backend (Rust)
-│   ├── src/
-│   │   ├── main.rs        # Entry point
-│   │   └── lib.rs         # Window init, file associations
-│   ├── tauri.conf.json    # Security config
-│   └── Cargo.toml
-│
-└── README.md              # This file
-```
-
-## Technical Stack
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Frontend** | Vanilla JS + Vite | Fast, minimal dependencies |
-| **Backend** | Rust + Tauri 2.x | Native OS integration |
-| **Styling** | CSS 3 | Responsive design |
-| **Build** | npm + cargo | Cross-platform compilation |
-
-## Support & Contribution
-
-- **Report Bugs**: Create an issue on GitHub
-- **Request Features**: Use GitHub Discussions
-- **Contribute Code**: Pull requests welcome!
-- **Documentation**: See [DEVELOPMENT.md](DEVELOPMENT.md) for setup
+- **Path Isolation**: Access limited to media directories only
+- **No Telemetry**: Complete offline operation, no tracking or data collection
+- **CSP Headers**: Content Security Policy blocks injection attacks
+- **Memory Safe**: Automatic cleanup, no memory leaks
 
 ## License
 

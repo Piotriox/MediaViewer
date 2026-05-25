@@ -1,48 +1,71 @@
-# Environment
+# Environment Variables
 .env
 .env.local
 .env.*.local
 
-# Development
+# Node.js
 node_modules/
-*.log
-*.swp
-*.swo
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Build outputs
+# Build Outputs
 dist/
+dist-ssr/
 build/
 *.tsbuildinfo
 
 # Rust/Tauri
 src-tauri/target/
 src-tauri/gen/
+Cargo.lock
 
-# Windows binaries
+# Compiled Binaries
 *.exe
 *.dll
+*.so
+*.dylib
 *.pdb
 *.exp
 *.lib
 
-# IDEs
-.vscode/
+# IDEs & Editors
+.vscode/*
+!.vscode/extensions.json
 .idea/
-*.sublime-workspace
 .history/
+*.sublime-workspace
 *.sublime-project
+*.swp
+*.swo
+*.sw?
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
-# Windows OS
+# OS Artifacts
 Thumbs.db
 .DS_Store
 ehthumbs.db
 desktop.ini
 $RECYCLE.BIN/
+.AppleDouble
+.LSOverride
 
 # Testing
 coverage/
 .nyc_output/
+*.lcov
 
-# Temporary
+# Temporary Files
 tmp/
 temp/
+*.tmp
+*.bak
+
+# Local Development
+.local/

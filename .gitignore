@@ -6,11 +6,14 @@
 # Node.js
 node_modules/
 package-lock.json
+frontend/package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+backend/target
+backend/gen
 
 # Build Outputs
 dist/
